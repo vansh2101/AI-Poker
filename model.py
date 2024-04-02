@@ -103,7 +103,10 @@ class CustomPokerPlayer(BasePokerPlayer):
 
         for i in range(self.data["playing"]):
             if seats[i]['uuid'] != self.uuid:
-                self.data[self.players[seats[i]['uuid']] + '_stack'] = seats[i]['stack']
+                try:
+                    self.data[self.players[seats[i]['uuid']] + '_stack'] = seats[i]['stack']
+                except:
+                    continue
             else:
                 self.data['stack'] = seats[i]['stack']
 
@@ -212,18 +215,22 @@ class CustomPokerPlayer(BasePokerPlayer):
 
 
     def receive_game_update_message(self, action, round_state):
-        if action['player_uuid'] != self.uuid:
-            self.data[self.players[action['player_uuid']] + '_action'] = action['action']
-            self.data[self.players[action['player_uuid']] + '_bet'] = action['amount']
-            self.data[self.players[action['player_uuid']] + '_stack'] -= action['amount']
-        else:
-            self.data['stack'] -= action['amount']
+        try:
+            if action['player_uuid'] != self.uuid:
+                self.data[self.players[action['player_uuid']] + '_action'] = action['action']
+                self.data[self.players[action['player_uuid']] + '_bet'] = action['amount']
+                self.data[self.players[action['player_uuid']] + '_stack'] -= action['amount']
+            else:
+                self.data['stack'] -= action['amount']
+        except:
+            pass
 
         self.data['pot'] += action['amount']
 
         
     def receive_round_result_message(self, winners, hand_info, round_state):
-        print()
+        # print()
+        pass
 
 
     def separateCards(self, cards):
